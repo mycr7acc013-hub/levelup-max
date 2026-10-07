@@ -1,11 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
-const BAD = ["fuck", "shit", "bitch", "cunt", "nigg", "fag", "retard", "kys", "kill yourself", "slut", "whore", "dick", "pussy", "rape"];
-
-export function isFlagged(text: string) {
-  const t = text.toLowerCase();
-  return BAD.some((w) => t.includes(w));
-}
+import { isFlagged } from "./flag";
+export { isFlagged };
 
 export async function logActivity(event: string, detail = "") {
   const { data } = await supabase.auth.getUser();

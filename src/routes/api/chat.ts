@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, type UIMessage } from "ai";
 import { startResponses, userClient, withRunId, isBanned } from "@/lib/ai.server";
 import { GUIDES, SAFETY_NOTE, QUIZZES } from "@/lib/content";
-import { isFlagged } from "@/lib/activity";
+import { isFlagged } from "@/lib/flag";
 
 const FREE_DAILY = 25;
 
