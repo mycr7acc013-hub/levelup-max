@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as GuidesRouteImport } from './routes/guides'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAssessRouteImport } from './routes/_authenticated/assess'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
@@ -48,6 +50,16 @@ const GuidesRoute = GuidesRouteImport.update({
   id: '/guides',
   path: '/guides',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAssessRoute = AuthenticatedAssessRouteImport.update({
   id: '/assess',
@@ -106,6 +118,8 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/assess': typeof AuthenticatedAssessRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/progress': typeof AuthenticatedProgressRoute
@@ -122,6 +136,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/assess': typeof AuthenticatedAssessRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/progress': typeof AuthenticatedProgressRoute
@@ -140,6 +156,8 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/guides': typeof GuidesRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assess': typeof AuthenticatedAssessRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
@@ -158,6 +176,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/guides'
+    | '/pricing'
+    | '/admin'
     | '/assess'
     | '/dashboard'
     | '/progress'
@@ -174,6 +194,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/guides'
+    | '/pricing'
+    | '/admin'
     | '/assess'
     | '/dashboard'
     | '/progress'
@@ -191,6 +213,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/guides'
+    | '/pricing'
+    | '/_authenticated/admin'
     | '/_authenticated/assess'
     | '/_authenticated/dashboard'
     | '/_authenticated/progress'
@@ -209,6 +233,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   GuidesRoute: typeof GuidesRouteWithChildren
+  PricingRoute: typeof PricingRoute
   ApiAnalyzeRoute: typeof ApiAnalyzeRoute
   ApiChatRoute: typeof ApiChatRoute
 }
@@ -249,6 +274,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/guides'
       preLoaderRoute: typeof GuidesRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/assess': {
       id: '/_authenticated/assess'
@@ -324,6 +363,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAssessRoute: typeof AuthenticatedAssessRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
@@ -334,6 +374,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAssessRoute: AuthenticatedAssessRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
@@ -363,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   GuidesRoute: GuidesRouteWithChildren,
+  PricingRoute: PricingRoute,
   ApiAnalyzeRoute: ApiAnalyzeRoute,
   ApiChatRoute: ApiChatRoute,
 }
