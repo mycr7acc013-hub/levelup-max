@@ -42,7 +42,7 @@ function Runner({ quiz, onExit }: { quiz: Quiz; onExit: () => void }) {
   const [picked, setPicked] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const q = quiz.questions[i];
+  const q = quiz.questions[i]!;
 
   const next = async () => {
     const s = score + (picked === q.correct ? 1 : 0);
