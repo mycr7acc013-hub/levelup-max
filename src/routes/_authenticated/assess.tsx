@@ -58,7 +58,7 @@ function Manual({ onDone }: { onDone: (r: Result) => void }) {
         {ASSESS_FIELDS.map((f) => (
           <div key={f.key} className="space-y-1.5">
             <label className="text-sm font-medium">{f.label}</label>
-            <Select value={vals[f.key]} onValueChange={(v) => setVals({ ...vals, [f.key]: v })}>
+            <Select value={vals[f.key] ?? ""} onValueChange={(v) => setVals({ ...vals, [f.key]: v })}>
               <SelectTrigger><SelectValue placeholder="Choose how you are now" /></SelectTrigger>
               <SelectContent>{f.options.map((o) => <SelectItem key={o.label} value={String(o.v)}>{o.label}</SelectItem>)}</SelectContent>
             </Select>

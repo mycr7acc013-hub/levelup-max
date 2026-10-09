@@ -30,7 +30,7 @@ function ProgressPage() {
 
   const del = async (id: string) => { await supabase.from("assessments").delete().eq("id", id); toast.success("Deleted"); load(); };
   const max = 100;
-  const first = rows[0]?.overall, last = rows[rows.length - 1]?.overall;
+  const first = rows[0]?.overall ?? 0, last = rows[rows.length - 1]?.overall ?? 0;
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-10">

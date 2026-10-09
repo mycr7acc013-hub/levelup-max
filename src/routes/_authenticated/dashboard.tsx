@@ -44,7 +44,7 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Stat label="Overall score" value={latest ? `${latest.overall}%` : "-"} sub={tier ? tier.name : "Take an assessment"} subClass={tier?.color} />
+        <Stat label="Overall score" value={latest ? `${latest.overall}%` : "-"} sub={tier ? tier.name : "Take an assessment"} subClass={tier?.color ?? ""} />
         <Stat label="Streak" value={`${profile?.streak ?? 0} days`} icon={<Flame className="size-5 text-gold" />} />
         <Stat label="Level" value={`Lv ${level}`} sub={`${profile?.xp ?? 0} XP`} icon={<Star className="size-5 text-primary" />} />
         <Stat label="Plan" value={profile?.is_pro ? "MixMax" : "Free"} sub={profile?.is_pro ? "All features unlocked" : "Upgrade for more"} subClass={profile?.is_pro ? "text-gold" : ""} />
@@ -72,7 +72,7 @@ function Dashboard() {
   );
 }
 
-function Stat({ label, value, sub, subClass, icon }: { label: string; value: string; sub?: string; subClass?: string; icon?: React.ReactNode }) {
+function Stat({ label, value, sub, subClass, icon }: { label: string; value: string; sub?: string | undefined; subClass?: string | undefined; icon?: React.ReactNode }) {
   return (
     <div className="animate-rise rounded-2xl glass p-5">
       <div className="flex items-center justify-between text-sm text-muted-foreground">{label}{icon}</div>

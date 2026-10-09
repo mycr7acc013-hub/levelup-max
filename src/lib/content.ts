@@ -147,7 +147,7 @@ export function buildSchedule(scores: Record<string, number>, minutesPerDay: num
   const tasks: Task[] = [{ id: "journal", label: "Wins journal", minutes: 3, guide: "confidence" }];
   let budget = minutesPerDay;
   for (const [k] of ordered) {
-    for (const t of TASK_POOL[k]) {
+    for (const t of TASK_POOL[k] ?? []) {
       if (tasks.find((x) => x.id === t.id)) continue;
       if (t.minutes > 120 || t.minutes <= budget) { tasks.push(t); if (t.minutes <= 120) budget -= t.minutes; }
     }

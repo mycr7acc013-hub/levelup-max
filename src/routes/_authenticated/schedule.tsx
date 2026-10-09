@@ -41,7 +41,7 @@ function Schedule() {
   const checkIn = async () => {
     if (!profile) return;
     const { error } = await supabase.from("checkins").insert({ user_id: profile.id, day: today, tasks_done: done, mood: Number(mood), notes });
-    if (error) return toast.error("Check-in failed");
+    if (error) { toast.error("Check-in failed"); return; }
     const yest = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
     const streak = profile.last_checkin === yest ? profile.streak + 1 : 1;
     await supabase.from("profiles").update({ streak, last_checkin: today }).eq("id", profile.id);
@@ -80,7 +80,7 @@ function Schedule() {
         {checked ? <p className="flex items-center gap-2 text-primary"><CheckCircle2 />You've checked in today. See you tomorrow!</p> : <>
           <div className="w-48"><label className="text-xs text-muted-foreground">How did today feel?</label>
             <Select value={mood} onValueChange={setMood}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{["1 · Rough", "2 · Meh", "3 · Okay", "4 · Good", "5 · Locked in"].map((m) => <SelectItem key={m} value={m[0]}>{m}</SelectItem>)}</SelectContent></Select></div>
+              <SelectContent>{["1 · Rough", "2 · Meh", "3 · Okay", "4 · Good", "5 · Locked in"].map((m) => <SelectItem key={m} value={m.charAt(0)}>{m}</SelectItem>)}</SelectContent></Select></div>
           <Textarea placeholder="Notes: wins, struggles, how you look today…" value={notes} onChange={(e) => setNotes(e.target.value)} />
           <p className="text-xs text-muted-foreground">Want a progress photo? Do a quick <Link to="/assess" className="text-primary underline">AI scan</Link> to track your face over time.</p>
           <Button variant="hero" onClick={checkIn}>Check in (+XP)</Button>
