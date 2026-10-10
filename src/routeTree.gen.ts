@@ -26,6 +26,8 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatThreadIdRouteImport } from './routes/_authenticated/chat.$threadId'
+import { Route as ApiStudioImageRouteImport } from './routes/api/studio.image'
+import { Route as ApiStudioVideoRouteImport } from './routes/api/studio.video'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -112,6 +114,16 @@ const AuthenticatedChatThreadIdRoute =
     path: '/chat/$threadId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiStudioImageRoute = ApiStudioImageRouteImport.update({
+  id: '/api/studio/image',
+  path: '/api/studio/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStudioVideoRoute = ApiStudioVideoRouteImport.update({
+  id: '/api/studio/video',
+  path: '/api/studio/video',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -129,6 +141,8 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/api/studio/image': typeof ApiStudioImageRoute
+  '/api/studio/video': typeof ApiStudioVideoRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
 }
 export interface FileRoutesByTo {
@@ -147,6 +161,8 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/api/studio/image': typeof ApiStudioImageRoute
+  '/api/studio/video': typeof ApiStudioVideoRoute
   '/chat': typeof AuthenticatedChatIndexRoute
 }
 export interface FileRoutesById {
@@ -167,6 +183,8 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/_authenticated/chat/$threadId': typeof AuthenticatedChatThreadIdRoute
+  '/api/studio/image': typeof ApiStudioImageRoute
+  '/api/studio/video': typeof ApiStudioVideoRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
 }
 export interface FileRouteTypes {
@@ -187,6 +205,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/guides/$slug'
     | '/chat/$threadId'
+    | '/api/studio/image'
+    | '/api/studio/video'
     | '/chat/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -205,6 +225,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/guides/$slug'
     | '/chat/$threadId'
+    | '/api/studio/image'
+    | '/api/studio/video'
     | '/chat'
   id:
     | '__root__'
@@ -224,6 +246,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/guides/$slug'
     | '/_authenticated/chat/$threadId'
+    | '/api/studio/image'
+    | '/api/studio/video'
     | '/_authenticated/chat/'
   fileRoutesById: FileRoutesById
 }
@@ -236,6 +260,8 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ApiAnalyzeRoute: typeof ApiAnalyzeRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiStudioImageRoute: typeof ApiStudioImageRoute
+  ApiStudioVideoRoute: typeof ApiStudioVideoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -359,6 +385,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatThreadIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/studio/image': {
+      id: '/api/studio/image'
+      path: '/api/studio/image'
+      fullPath: '/api/studio/image'
+      preLoaderRoute: typeof ApiStudioImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/studio/video': {
+      id: '/api/studio/video'
+      path: '/api/studio/video'
+      fullPath: '/api/studio/video'
+      preLoaderRoute: typeof ApiStudioVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -407,6 +447,8 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ApiAnalyzeRoute: ApiAnalyzeRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiStudioImageRoute: ApiStudioImageRoute,
+  ApiStudioVideoRoute: ApiStudioVideoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
