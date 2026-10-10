@@ -15,6 +15,13 @@
       "when": 1791425751404,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791626355400,
+      "tag": "0002_studio",
+      "breakpoints": true
     }
   ]
 }

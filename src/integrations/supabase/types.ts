@@ -241,6 +241,45 @@ export type Database = {
         }
         Relationships: []
       }
+      studio_creations: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          job_id: string | null
+          kind: string
+          prompt: string
+          status: string
+          storage_path: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id?: string | null
+          kind: string
+          prompt: string
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          job_id?: string | null
+          kind?: string
+          prompt?: string
+          status?: string
+          storage_path?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

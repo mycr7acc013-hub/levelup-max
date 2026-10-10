@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { streamText, type ModelMessage } from "ai";
+import { streamText, stepCountIs, type ModelMessage, type ToolSet } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -31,7 +31,7 @@ export function createRunIdFetch(initialRunId?: string) {
   };
 }
 
-export function startResponses(request: Request, messages: ModelMessage[], system: string, effort: "low" | "medium" = "medium") {
+export function startResponses(request: Request, messages: ModelMessage[], system: string, effort: "low" | "medium" = "medium", tools?: ToolSet) {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Response("AI is not configured", { status: 500 });
   const runIdFetch = createRunIdFetch(request.headers.get(LOVABLE_AIG_RUN_ID_HEADER) ?? undefined);
@@ -45,6 +45,7 @@ export function startResponses(request: Request, messages: ModelMessage[], syste
     model: provider.responses(MODEL),
     system,
     messages,
+    ...(tools ? { tools, stopWhen: stepCountIs(6) } : {}),
     abortSignal: request.signal,
     providerOptions: {
       openai: {
