@@ -3,14 +3,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { toast } from "sonner";
-import { Plus, Trash2, Zap, MessageSquare } from "lucide-react";
+import { Plus, Trash2, Zap, MessageSquare, ImagePlus, ArrowRight, Wrench } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { seo } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from "@/components/ai-elements/conversation";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
-import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea } from "@/components/ai-elements/prompt-input";
+import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, PromptInputAttachments, PromptInputAttachment, usePromptInputAttachments } from "@/components/ai-elements/prompt-input";
+import type { FileUIPart } from "ai";
+
+function AttachButton() {
+  const a = usePromptInputAttachments();
+  return <button type="button" aria-label="Attach image" onClick={() => a.openFileDialog()} className="grid size-8 place-items-center rounded-full hover:bg-secondary"><ImagePlus className="size-4" /></button>;
+}
 
 export const Route = createFileRoute("/_authenticated/chat/$threadId")({
   head: () => seo("LevelUp AI", "Chat with LevelUp AI, your personal glow-up coach."),
@@ -75,7 +81,7 @@ function ChatPage() {
   );
 }
 
-const STARTERS = ["Build me a 30-day jawline plan", "What skincare should I start with?", "How do I get to Chadlite?", "Where do I scan my face?"];
+const STARTERS = ["How am I progressing?", "Build my plan for today (45 min)", "Rate my outfit (attach a photo)", "Take me to the face scan", "Build me a 30-day jawline plan", "What can MixMax Studio do?"];
 
 function ChatWindow({ threadId, initial, token, onDone }: { threadId: string; initial: UIMessage[]; token: string; onDone: () => void }) {
   const [input, setInput] = useState("");
@@ -91,9 +97,9 @@ function ChatWindow({ threadId, initial, token, onDone }: { threadId: string; in
   const busy = status === "submitted" || status === "streaming";
   useEffect(() => { ref.current?.focus(); }, []);
 
-  const send = (text: string) => {
-    if (!text.trim() || busy) return;
-    void sendMessage({ text });
+  const send = (text: string, files: FileUIPart[] = []) => {
+    if ((!text.trim() && !files.length) || busy) return;
+    void sendMessage(files.length ? { text: text || "What do you think of this?", files } : { text });
     setInput("");
     ref.current?.focus();
   };
@@ -109,7 +115,10 @@ function ChatWindow({ threadId, initial, token, onDone }: { threadId: string; in
           ) : messages.map((m) => (
             <Message key={m.id} from={m.role}>
               <MessageContent className="group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground">
-                {m.parts.map((p, i) => p.type === "text" ? (m.role === "user" ? <p key={i} className="whitespace-pre-wrap">{p.text}</p> : <MessageResponse key={i}>{p.text}</MessageResponse>)
+                {m.parts.map((p, i) => p.type === "file" && p.mediaType?.startsWith("image/") ? <img key={i} src={p.url} alt="Attachment" className="max-h-64 rounded-xl" />
+                  : p.type === "tool-navigate" && p.state === "output-available" ? <Link key={i} to={(p.output as { path: string }).path} className="inline-flex w-fit items-center gap-2 rounded-full bg-gradient-brand px-4 py-2 text-sm font-semibold text-primary-foreground shadow-glow transition hover:scale-105">{(p.output as { label: string }).label}<ArrowRight className="size-4" /></Link>
+                  : p.type.startsWith("tool-") && p.type !== "tool-navigate" ? <span key={i} className="inline-flex w-fit items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground"><Wrench className="size-3" />{"state" in p && p.state === "output-available" ? "Checked" : "Checking"} {p.type.slice(5).replace(/_/g, " ")}</span>
+                  : p.type === "text" ? (m.role === "user" ? <p key={i} className="whitespace-pre-wrap">{p.text}</p> : <MessageResponse key={i}>{p.text}</MessageResponse>)
                   : p.type === "reasoning" && p.text ? <details key={i} className="text-xs text-muted-foreground"><summary className="cursor-pointer">Thinking…</summary><p className="whitespace-pre-wrap">{p.text}</p></details> : null)}
               </MessageContent>
             </Message>
@@ -119,12 +128,14 @@ function ChatWindow({ threadId, initial, token, onDone }: { threadId: string; in
         <ConversationScrollButton />
       </Conversation>
       <div className="p-3">
-        <PromptInput onSubmit={(msg) => (busy ? stop() : send(msg.text))}>
+        <PromptInput accept="image/*" multiple maxFiles={4} maxFileSize={6_000_000} onError={(e) => toast.error(e.message)} onSubmit={(msg) => (busy ? stop() : send(msg.text, msg.files))}>
+          <PromptInputAttachments>{(f) => <PromptInputAttachment data={f} />}</PromptInputAttachments>
           <PromptInputBody>
             <PromptInputTextarea ref={ref} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Message LevelUp AI…" />
           </PromptInputBody>
-          <PromptInputFooter className="justify-end">
-            <PromptInputSubmit status={status} disabled={!busy && !input.trim()} />
+          <PromptInputFooter className="justify-between">
+            <AttachButton />
+            <PromptInputSubmit status={status}  />
           </PromptInputFooter>
         </PromptInput>
       </div>
