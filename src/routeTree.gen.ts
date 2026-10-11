@@ -22,6 +22,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedQuizRouteImport } from './routes/_authenticated/quiz'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
+import { Route as AuthenticatedStudioRouteImport } from './routes/_authenticated/studio'
 import { Route as ApiAnalyzeRouteImport } from './routes/api/analyze'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
@@ -94,6 +95,11 @@ const AuthenticatedScheduleRoute = AuthenticatedScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStudioRoute = AuthenticatedStudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiAnalyzeRoute = ApiAnalyzeRouteImport.update({
   id: '/api/analyze',
   path: '/api/analyze',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/progress': typeof AuthenticatedProgressRoute
   '/quiz': typeof AuthenticatedQuizRoute
   '/schedule': typeof AuthenticatedScheduleRoute
+  '/studio': typeof AuthenticatedStudioRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/chat': typeof ApiChatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/progress': typeof AuthenticatedProgressRoute
   '/quiz': typeof AuthenticatedQuizRoute
   '/schedule': typeof AuthenticatedScheduleRoute
+  '/studio': typeof AuthenticatedStudioRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/chat': typeof ApiChatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/_authenticated/quiz': typeof AuthenticatedQuizRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
+  '/_authenticated/studio': typeof AuthenticatedStudioRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/chat': typeof ApiChatRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/quiz'
     | '/schedule'
+    | '/studio'
     | '/api/analyze'
     | '/api/chat'
     | '/guides/$slug'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/quiz'
     | '/schedule'
+    | '/studio'
     | '/api/analyze'
     | '/api/chat'
     | '/guides/$slug'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/_authenticated/progress'
     | '/_authenticated/quiz'
     | '/_authenticated/schedule'
+    | '/_authenticated/studio'
     | '/api/analyze'
     | '/api/chat'
     | '/guides/$slug'
@@ -369,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedScheduleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/studio': {
+      id: '/_authenticated/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof AuthenticatedStudioRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/analyze': {
       id: '/api/analyze'
       path: '/api/analyze'
@@ -429,6 +448,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedQuizRoute: typeof AuthenticatedQuizRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
+  AuthenticatedStudioRoute: typeof AuthenticatedStudioRoute
   AuthenticatedChatThreadIdRoute: typeof AuthenticatedChatThreadIdRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
 }
@@ -441,6 +461,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedQuizRoute: AuthenticatedQuizRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
+  AuthenticatedStudioRoute: AuthenticatedStudioRoute,
   AuthenticatedChatThreadIdRoute: AuthenticatedChatThreadIdRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
 }
