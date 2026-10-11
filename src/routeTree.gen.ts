@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAssessRouteImport } from './routes/_authenticated/assess'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -57,6 +58,11 @@ const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/guides': typeof GuidesRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/assess': typeof AuthenticatedAssessRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/guides': typeof GuidesRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/assess': typeof AuthenticatedAssessRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/guides': typeof GuidesRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/assess': typeof AuthenticatedAssessRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/guides'
     | '/pricing'
+    | '/account'
     | '/admin'
     | '/assess'
     | '/dashboard'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/guides'
     | '/pricing'
+    | '/account'
     | '/admin'
     | '/assess'
     | '/dashboard'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/guides'
     | '/pricing'
+    | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/_authenticated/assess'
     | '/_authenticated/dashboard'
@@ -307,6 +319,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -403,6 +422,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAssessRoute: typeof AuthenticatedAssessRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -414,6 +434,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAssessRoute: AuthenticatedAssessRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
