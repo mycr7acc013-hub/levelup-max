@@ -127,7 +127,7 @@ export const ASSESS_FIELDS: { key: string; label: string; options: { label: stri
 ];
 
 export const SCORE_LABELS: Record<string, string> = {
-  jaw: "Jawline", skin: "Skin", eyes: "Eyes", hair: "Hair", bodyfat: "Leanness", physique: "Physique", posture: "Posture", style: "Style", symmetry: "Symmetry", harmony: "Facial harmony",
+  jaw: "Jawline", skin: "Skin", eyes: "Eyes", hair: "Hair", bodyfat: "Leanness", physique: "Physique", posture: "Posture", style: "Style", symmetry: "Symmetry", harmony: "Facial harmony", profile: "Side profile",
 };
 
 export type Task = { id: string; label: string; minutes: number; guide?: string };

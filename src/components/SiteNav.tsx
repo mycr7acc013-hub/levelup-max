@@ -13,6 +13,7 @@ const LINKS = [
   { to: "/quiz", label: "Quizzes" },
   { to: "/progress", label: "Progress" },
   { to: "/chat", label: "LevelUp AI" },
+  { to: "/studio", label: "Studio ✦" },
 ] as const;
 
 export function Logo() {

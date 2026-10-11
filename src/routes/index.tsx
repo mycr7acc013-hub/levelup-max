@@ -75,7 +75,7 @@ function Index() {
           <div className="absolute inset-0 -z-10 bg-gradient-brand opacity-10" />
           <Crown className="mx-auto mb-3 size-10 text-gold" />
           <h2 className="text-3xl font-bold md:text-4xl">LevelUp <span className="text-gold">MixMax</span></h2>
-          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Unlimited AI coaching and photo scans, pro guides, advanced exams and deeper stats, all for $7.50/month.</p>
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">AI Studio (create AI images and 15-second AI videos), unlimited AI coaching and photo scans, pro guides, advanced exams and deeper stats, all for $5.00/month. Cancel anytime.</p>
           <Button asChild variant="hero" size="xl" className="mt-6"><Link to="/pricing">See MixMax</Link></Button>
         </div>
       </section>

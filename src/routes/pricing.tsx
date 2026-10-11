@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/pricing")({
-  head: () => seo("LevelUp MixMax", "Upgrade to LevelUp MixMax for $7.50/month: unlimited AI, scans, pro guides and advanced exams."),
+  head: () => seo("LevelUp MixMax", "Upgrade to LevelUp MixMax for $5.00/month: unlimited AI, scans, pro guides and advanced exams."),
   component: Pricing,
 });
 
@@ -27,7 +27,7 @@ function Pricing() {
         <div className="relative rounded-3xl border border-gold/50 p-8 shadow-glow">
           <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-brand opacity-10" />
           <h2 className="flex items-center gap-2 text-2xl font-bold"><Crown className="text-gold" />MixMax</h2>
-          <p className="mt-2 font-display text-4xl">$7.50<span className="text-base text-muted-foreground">/month</span></p>
+          <p className="mt-2 font-display text-4xl">$5.00<span className="text-base text-muted-foreground">/month</span></p>
           <ul className="mt-6 space-y-2 text-sm">{PRO.map((f) => <li key={f} className="flex gap-2"><Check className="size-4 text-gold" />{f}</li>)}</ul>
           {profile?.is_pro ? <Button variant="glass" className="mt-8 w-full" disabled>You're MixMax ✨</Button>
             : <Button variant="hero" className="mt-8 w-full" onClick={() => session ? toast.info("Checkout is being set up and will open very soon.") : (window.location.href = "/auth")}>Upgrade to MixMax</Button>}
