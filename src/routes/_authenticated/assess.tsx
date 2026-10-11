@@ -70,14 +70,25 @@ function Manual({ onDone }: { onDone: (r: Result) => void }) {
   );
 }
 
+type Slot = "front" | "side";
+const SLOT_INFO: Record<Slot, { label: string; tip: string }> = {
+  front: { label: "Front photo", tip: "Face the camera straight on, neutral expression, hair off your forehead." },
+  side: { label: "Side profile", tip: "Turn 90° so the camera sees your side profile: jaw, chin, nose and neck line." },
+};
+
 function Scan({ onDone }: { onDone: (r: Result) => void }) {
   const { session } = useAuth();
-  const [img, setImg] = useState<string | null>(null);
+  const [imgs, setImgs] = useState<Record<Slot, string | null>>({ front: null, side: null });
+  const [slot, setSlot] = useState<Slot>("front");
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [camOn, setCamOn] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const setImg = (d: string) => {
+    setImgs((p) => ({ ...p, [slot]: d }));
+    if (slot === "front") setSlot("side");
+  };
 
   const startCam = async () => {
     try {
@@ -109,43 +120,58 @@ function Scan({ onDone }: { onDone: (r: Result) => void }) {
       i.src = reader.result as string;
     };
     reader.readAsDataURL(f);
+    if (fileRef.current) fileRef.current.value = "";
   };
 
+  const ready = !!imgs.front && !!imgs.side;
   const analyze = async () => {
-    if (!img || !consent) return;
+    if (!ready || !consent) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` }, body: JSON.stringify({ image: img, consent }) });
+      const res = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` }, body: JSON.stringify({ front: imgs.front, side: imgs.side, consent }) });
       if (!res.ok) { toast.error(await res.text()); return; }
       const j = await res.json();
       if (j.error) { toast.error(j.error); return; }
       const scores = j.scores as Record<string, number>;
       const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / Object.values(scores).length);
       const r = { ...j, scores, overall };
-      await save("scan", { faceShape: j.faceShape }, r);
+      await save("scan", { faceShape: j.faceShape, profile: j.profileNotes }, r);
       onDone(r);
     } catch { toast.error("Network error, please try again."); } finally { setBusy(false); }
   };
 
+  const current = imgs[slot];
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      <div className="relative grid aspect-[4/5] place-items-center overflow-hidden rounded-2xl glass">
-        {camOn ? <video ref={video} playsInline muted className="h-full w-full -scale-x-100 object-cover" /> : img ? <img src={img} alt="Your photo" className="h-full w-full object-cover" /> : <Camera className="size-16 text-muted-foreground" />}
-        {(busy || camOn) && <div className="absolute inset-x-0 h-0.5 animate-scan bg-primary shadow-glow" />}
+      <div className="space-y-3">
+        <div className="relative grid aspect-[4/5] place-items-center overflow-hidden rounded-2xl glass">
+          {camOn ? <video ref={video} playsInline muted className="h-full w-full -scale-x-100 object-cover" /> : current ? <img src={current} alt={SLOT_INFO[slot].label} className="h-full w-full object-cover animate-rise" /> : <div className="text-center text-muted-foreground"><Camera className="mx-auto size-16" /><p className="mt-2 text-sm">{SLOT_INFO[slot].label}</p></div>}
+          {(busy || camOn) && <div className="absolute inset-x-0 h-0.5 animate-scan bg-primary shadow-glow" />}
+          {camOn && slot === "side" && <div className="pointer-events-none absolute inset-y-10 left-1/2 w-40 -translate-x-1/2 rounded-[50%] border-2 border-dashed border-primary/60" />}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {(["front", "side"] as Slot[]).map((s) => (
+            <button key={s} onClick={() => setSlot(s)} className={`relative overflow-hidden rounded-xl border p-2 text-left text-xs transition ${slot === s ? "border-primary shadow-glow" : "border-border"}`}>
+              <div className="mb-1 aspect-square overflow-hidden rounded-lg bg-secondary">{imgs[s] && <img src={imgs[s]!} alt="" className="h-full w-full object-cover" />}</div>
+              {SLOT_INFO[s].label} {imgs[s] ? "✓" : ""}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Scan your face</h2>
-        <p className="text-sm text-muted-foreground">Face the camera in good, even light with your hair off your forehead and a neutral expression.</p>
+        <p className="text-sm text-muted-foreground">We need <b>two photos</b>: one from the front and one side profile. Use good, even light.</p>
+        <div className="rounded-xl border border-primary/40 bg-primary/5 p-3 text-sm"><b>{SLOT_INFO[slot].label}:</b> {SLOT_INFO[slot].tip}</div>
         <div className="flex flex-wrap gap-2">
-          {camOn ? <Button variant="hero" onClick={snap}>Take photo</Button> : <Button variant="glass" onClick={startCam}><Camera />Use camera</Button>}
-          <Button variant="glass" onClick={() => fileRef.current?.click()}><Upload />Upload photo</Button>
+          {camOn ? <Button variant="hero" onClick={snap}>Take {slot} photo</Button> : <Button variant="glass" onClick={startCam}><Camera />Use camera</Button>}
+          <Button variant="glass" onClick={() => fileRef.current?.click()}><Upload />Upload {slot} photo</Button>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
         </div>
         <label className="flex items-start gap-3 rounded-xl border border-border p-4 text-sm">
           <Checkbox checked={consent} onCheckedChange={(v) => setConsent(!!v)} className="mt-0.5" />
-          <span>I agree to send this photo to LevelUp's AI for analysis. <span className="text-muted-foreground">The photo is processed once and never stored. Only your scores are saved, and you can delete them from Progress at any time.</span></span>
+          <span>I agree to send these photos to LevelUp's AI for analysis. <span className="text-muted-foreground">The photos are processed once and never stored. Only your scores are saved, and you can delete them from Progress at any time.</span></span>
         </label>
-        <Button variant="hero" size="xl" className="w-full" disabled={!img || !consent || busy} onClick={analyze}>{busy ? <><Loader2 className="animate-spin" />Analysing…</> : "Analyse with AI"}</Button>
+        <Button variant="hero" size="xl" className="w-full" disabled={!ready || !consent || busy} onClick={analyze}>{busy ? <><Loader2 className="animate-spin" />Analysing both angles…</> : ready ? "Analyse with AI" : `Add your ${!imgs.front ? "front" : "side"} photo`}</Button>
       </div>
     </div>
   );
