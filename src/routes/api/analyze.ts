@@ -5,7 +5,8 @@ const FREE_SCANS_PER_WEEK = 1;
 
 const SYSTEM = `You are LevelUp's appearance analysis engine. You look at one photo the user consented to share and give an honest, kind, constructive self-improvement assessment.
 Return ONLY a JSON object, no markdown, with this exact shape:
-{"scores":{"jaw":0-100,"skin":0-100,"eyes":0-100,"hair":0-100,"symmetry":0-100,"harmony":0-100,"posture":0-100,"style":0-100},"faceShape":"string","strengths":["..."],"improvements":[{"area":"string","tip":"string","timeframe":"string"}],"summary":"2-3 encouraging sentences"}
+{"scores":{"jaw":0-100,"skin":0-100,"eyes":0-100,"hair":0-100,"symmetry":0-100,"harmony":0-100,"profile":0-100,"posture":0-100,"style":0-100},"faceShape":"string","profileNotes":"1-2 sentences about the side profile: jawline angle, chin projection, neck posture","strengths":["..."],"improvements":[{"area":"string","tip":"string","timeframe":"string"}],"summary":"2-3 encouraging sentences"}
+You receive two photos: the FRONT view first, then the SIDE profile. Use the front for symmetry, skin, eyes, hair and harmony; use the side for jaw definition, chin, profile and forward-head posture.
 Scoring: be realistic but encouraging; most people score 50-75. Base it only on visible improvable factors (skin, grooming, hair, lighting, posture, leanness, style). Never comment on race, ethnicity or anything the person cannot change in a negative way. Never suggest bone smashing or anything harmful. If no human face is visible, return {"error":"No face detected"}.`;
 
 export const Route = createFileRoute("/api/analyze")({
@@ -15,9 +16,10 @@ export const Route = createFileRoute("/api/analyze")({
         const auth = await userClient(request);
         if (!auth) return new Response("Please sign in", { status: 401 });
         if (isBanned(auth.profile)) return new Response("Your account is suspended", { status: 403 });
-        const { image, consent } = (await request.json()) as { image?: string; consent?: boolean };
+        const { front, side, consent } = (await request.json()) as { front?: string; side?: string; consent?: boolean };
         if (!consent) return new Response("Consent is required", { status: 400 });
-        if (!image?.startsWith("data:image/") || image.length > 8_000_000) return new Response("Invalid image", { status: 400 });
+        const ok = (s?: string) => !!s?.startsWith("data:image/") && s.length < 8_000_000;
+        if (!ok(front) || !ok(side)) return new Response("Please add both a front photo and a side profile photo.", { status: 400 });
 
         if (!auth.profile?.is_pro) {
           const since = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -26,7 +28,7 @@ export const Route = createFileRoute("/api/analyze")({
         }
 
         const { result } = startResponses(request, [
-          { role: "user", content: [{ type: "text", text: "Analyse this photo for my LevelUp assessment." }, { type: "image", image }] },
+          { role: "user", content: [{ type: "text", text: "Analyse these two photos (front, then side profile) for my LevelUp assessment." }, { type: "image", image: front! }, { type: "image", image: side! }] },
         ], SYSTEM, "low");
         try {
           const text = await result.text;
