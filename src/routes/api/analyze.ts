@@ -37,6 +37,8 @@ export const Route = createFileRoute("/api/analyze")({
           return Response.json(json);
         } catch (e) {
           console.error("analyze failed", e);
+          const st = (e as { statusCode?: number })?.statusCode;
+          if (st === 402 || st === 403) return new Response("The AI scanner is taking a short break (AI usage limit reached). Try the Manual assessment, or scan again later.", { status: 503 });
           return new Response("The analysis failed. Please try another photo.", { status: 502 });
         }
       },
