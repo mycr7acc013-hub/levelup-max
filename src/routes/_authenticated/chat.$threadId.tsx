@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import { DefaultChatTransport, type UIMessage, type FileUIPart } from "ai";
 import { toast } from "sonner";
 import { Plus, Trash2, Zap, MessageSquare, ImagePlus, ArrowRight, Wrench } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from "@/components/ai-elements/conversation";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea, PromptInputAttachments, PromptInputAttachment, usePromptInputAttachments } from "@/components/ai-elements/prompt-input";
-import type { FileUIPart } from "ai";
+
 
 function AttachButton() {
   const a = usePromptInputAttachments();
