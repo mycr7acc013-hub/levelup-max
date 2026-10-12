@@ -104,6 +104,13 @@ export const Route = createFileRoute("/api/chat")({
         const res = result.toUIMessageStreamResponse({
           originalMessages: body.messages,
           sendReasoning: true,
+          onError: (e) => {
+            const st = (e as { statusCode?: number })?.statusCode;
+            console.error("chat stream", st, e);
+            if (st === 402 || st === 403) return "LevelUp AI is taking a short break right now (AI usage limit reached). Please try again later.";
+            if (st === 429) return "LevelUp AI is busy. Please try again in a minute.";
+            return "Something went wrong answering that. Please try again.";
+          },
           onFinish: async ({ responseMessage }) => {
             const { error } = await supabase.from("chat_messages").insert({ thread_id: thread.id, user_id: user.id, role: "assistant", message: responseMessage as never });
             if (error) console.error("save assistant msg", error);

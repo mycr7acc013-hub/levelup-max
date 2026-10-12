@@ -42,7 +42,9 @@ function ChatPage() {
     setInitial(null);
     supabase.from("chat_messages").select("message").eq("thread_id", threadId).order("created_at").then(({ data, error }) => {
       if (error) toast.error("Couldn't load chat");
-      setInitial((data ?? []).map((r) => r.message as unknown as UIMessage));
+      const seen = new Map<string, UIMessage>();
+      for (const r of data ?? []) { const msg = r.message as unknown as UIMessage; seen.set(msg.id || crypto.randomUUID(), msg); }
+      setInitial([...seen.values()]);
     });
   }, [threadId]);
 
