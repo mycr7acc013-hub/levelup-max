@@ -36,7 +36,7 @@ export const Route = createFileRoute("/api/studio/video")({
         } catch (e) {
           console.error("video create", e);
           const status = e instanceof GatewayError ? e.status : 500;
-          return new Response(e instanceof GatewayError ? e.message : "Couldn't start the video.", { status });
+          return new Response(status === 402 || status === 403 ? "AI Studio is taking a short break (AI usage limit reached). Please try again later." : e instanceof GatewayError ? e.message : "Couldn't start the video.", { status });
         }
       },
       GET: async ({ request }) => {
