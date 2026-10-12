@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/studio")({
   component: Studio,
 });
 
-type Creation = { id: string; kind: string; prompt: string; status: string; storage_path: string | null; error: string | null; created_at: string; url?: string };
+type Creation = { id: string; kind: string; prompt: string; status: string; storage_path: string | null; error: string | null; created_at: string; url?: string | undefined };
 
 const IDEAS = {
   image: ["A sleek streetwear outfit on a mannequin, studio lighting", "Futuristic gym at night with neon lights", "Motivational poster: 'Level Up' in bold chrome letters", "A cozy desk setup with plants and warm light"],
